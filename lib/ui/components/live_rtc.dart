@@ -14,12 +14,15 @@ import 'package:tencent_rtc_sdk/trtc_cloud.dart';
 import 'package:tencent_rtc_sdk/trtc_cloud_def.dart';
 import 'package:tencent_rtc_sdk/trtc_cloud_listener.dart';
 import 'package:trtc_demo/models/user_model.dart';
+import 'package:trtc_demo/ui/components/config.dart';
 import 'package:trtc_demo/ui/login.dart';
 import 'package:trtc_demo/utils/tool.dart';
 
-class LiveRtc extends StatefulWidget {
-  LiveRtc({Key? key, required this.isAnchor}) : super(key: key);
-  bool isAnchor;
+class LiveRtc extends StatefulWidget { 
+  
+  LiveRtc({Key? key, required this.isHost}) : super(key: key);
+
+  final bool isHost; // Whether the current user is the host
 
   @override
   State<LiveRtc> createState() => _LiveRtcState();
@@ -30,7 +33,6 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
   late TRTCCloud _trtcCloud;
   List<UserModel> _userList = [];
   List _screenUserList = [];
-  bool _isAnchor = true;
   String? _mixStreamTaskId;
   String? _mixStreamId;
 
@@ -47,96 +49,77 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
   TRTCCloudListener getListener() {
     return TRTCCloudListener(
       onError: (errCode, errMsg) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onError errCode:$errCode errMsg:$errMsg");
-
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onError errCode:$errCode errMsg:$errMsg");
         _showErrorDialog(errMsg);
       },
       onWarning: (warningCode, warningMsg) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onWarning warningCode:$warningCode warningMsg:$warningMsg");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onWarning warningCode:$warningCode warningMsg:$warningMsg");
       },
       onEnterRoom: (result) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onEnterRoom result:$result");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onEnterRoom result:$result");
 
         if (result > 0) {
           MeetingTool.toast('Enter room success', context);
         }
       },
       onExitRoom: (reason) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onExitRoom reason:$reason");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onExitRoom reason:$reason");
 
         if (reason > 0) {
           MeetingTool.toast('Exit room success', context);
         }
       },
       onSwitchRole: (errCode, errMsg) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onSwitchRole errCode:$errCode errMsg:$errMsg");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onSwitchRole errCode:$errCode errMsg:$errMsg");
       },
       onRemoteUserEnterRoom: (userId) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onRemoteUserEnterRoom userId:$userId");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onRemoteUserEnterRoom userId:$userId");
 
         _handleOnRemoteUserEnterRoom(userId);
       },
       onRemoteUserLeaveRoom: (userId, reason) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onRemoteUserLeaveRoom userId:$userId reason:$reason");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onRemoteUserLeaveRoom userId:$userId reason:$reason");
 
         _handleOnRemoteUserLeaveRoom(userId);
       },
       onUserVideoAvailable: (userId, available) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserVideoAvailable userId:$userId available:$available");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserVideoAvailable userId:$userId available:$available");
 
         _handleOnUserVideoAvailable(userId, available);
       },
       onUserSubStreamAvailable: (userId, available) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserSubStreamAvailable userId:$userId available:$available");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserSubStreamAvailable userId:$userId available:$available");
 
         _handleOnUserSubStreamAvailable(userId, available);
       },
       onUserAudioAvailable: (userId, available) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserAudioAvailable userId:$userId available:$available");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserAudioAvailable userId:$userId available:$available");
 
         _handleOnUserAudioAvailable(userId, available);
       },
       onFirstVideoFrame: (userId, streamType, width, height) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onFirstVideoFrame userId:$userId streamType:$streamType width:$width height:$height");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onFirstVideoFrame userId:$userId streamType:$streamType width:$width height:$height");
       },
       onFirstAudioFrame: (userId) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onFirstAudioFrame userId:$userId");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onFirstAudioFrame userId:$userId");
       },
       onSendFirstLocalVideoFrame: (streamType) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onSendFirstLocalVideoFrame streamType:$streamType");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onSendFirstLocalVideoFrame streamType:$streamType");
       },
       onRemoteVideoStatusUpdated: (userId, streamType, status, reason) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onRemoteVideoStatusUpdated userId:$userId streamType:$streamType status:$status reason:$reason");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onRemoteVideoStatusUpdated userId:$userId streamType:$streamType status:$status reason:$reason");
       },
       onRemoteAudioStatusUpdated: (userId, status, reason) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onRemoteAudioStatusUpdated userId:$userId status:$status reason:$reason");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onRemoteAudioStatusUpdated userId:$userId status:$status reason:$reason");
       },
       onUserVideoSizeChanged: (userId, streamType, newWidth, newHeight) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserVideoSizeChanged userId:$userId streamType:$streamType newWidth:$newWidth newHeight:$newHeight");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserVideoSizeChanged userId:$userId streamType:$streamType newWidth:$newWidth newHeight:$newHeight");
       },
       onNetworkQuality: (localQuality, remoteQuality) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onNetworkQuality localQuality userId:${localQuality.userId} quality:${localQuality.quality}");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onNetworkQuality localQuality userId:${localQuality.userId} quality:${localQuality.quality}");
 
         for (TRTCQualityInfo info in remoteQuality) {
-          _printLog(1,
-              "TRTCCloudExample TRTCCloudListenerparseCallbackParam onNetworkQuality remoteQuality userId:${info.userId} quality:${info.quality}");
+          _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onNetworkQuality remoteQuality userId:${info.userId} quality:${info.quality}");
         }
       },
       onStatistics: (statistics) {
@@ -166,56 +149,44 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
         }
       },
       onConnectionLost: () {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onConnectionLost");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onConnectionLost");
       },
       onTryToReconnect: () {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onTryToReconnect");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onTryToReconnect");
       },
       onConnectionRecovery: () {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onConnectionRecovery");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onConnectionRecovery");
       },
       onCameraDidReady: () {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onCameraDidReady");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onCameraDidReady");
       },
       onMicDidReady: () {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onMicDidReady");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onMicDidReady");
       },
       onUserVoiceVolume: (userVolumes, totalVolume) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserVoiceVolume totalVolume:$totalVolume");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserVoiceVolume totalVolume:$totalVolume");
 
         for (TRTCVolumeInfo info in userVolumes) {
-          _printLog(1,
-              "TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserVoiceVolume userId:${info.userId} volume:${info.volume}");
+          _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onUserVoiceVolume userId:${info.userId} volume:${info.volume}");
         }
       },
       onStartPublishMediaStream: (taskId, errCode, errMsg, extraInfo) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onStartPublishMediaStream taskId:$taskId errCode:$errCode errMsg:$errMsg extraInfo:$extraInfo");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onStartPublishMediaStream taskId:$taskId errCode:$errCode errMsg:$errMsg extraInfo:$extraInfo");
         _mixStreamTaskId = taskId;
       },
       onUpdatePublishMediaStream: (taskId, errCode, errMsg, extraInfo) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onUpdatePublishMediaStream taskId:$taskId errCode:$errCode errMsg:$errMsg extraInfo:$extraInfo");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onUpdatePublishMediaStream taskId:$taskId errCode:$errCode errMsg:$errMsg extraInfo:$extraInfo");
         _mixStreamTaskId = taskId;
       },
       onStopPublishMediaStream: (taskId, errCode, errMsg, extraInfo) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onStopPublishMediaStream taskId:$taskId errCode:$errCode errMsg:$errMsg extraInfo:$extraInfo");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onStopPublishMediaStream taskId:$taskId errCode:$errCode errMsg:$errMsg extraInfo:$extraInfo");
         _mixStreamTaskId = null;
       },
       onCdnStreamStateChanged: (cdnUrl, status, errCode, errMsg, extraInfo) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onCdnStreamStateChanged cdnUrl:$cdnUrl status:$status errCode:$errCode errMsg:$errMsg extraInfo:$extraInfo");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onCdnStreamStateChanged cdnUrl:$cdnUrl status:$status errCode:$errCode errMsg:$errMsg extraInfo:$extraInfo");
       },
       onSnapshotComplete: (userId, path, errorCode, errMsg) {
-        _printLog(1,
-            "TRTCCloudExample TRTCCloudListenerparseCallbackParam onSnapshotComplete userId:$userId path:$path errorCode:$errorCode errMsg:$errMsg");
+        _printLog(1,"TRTCCloudExample TRTCCloudListenerparseCallbackParam onSnapshotComplete userId:$userId path:$path errorCode:$errorCode errMsg:$errMsg");
       },
     );
   }
@@ -225,8 +196,7 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.inactive:
         break;
-      case AppLifecycleState
-          .resumed: //Switch from the background to the foreground, and the interface is visible
+      case AppLifecycleState.resumed: //Switch from the background to the foreground, and the interface is visible
         if (!kIsWeb && Platform.isAndroid) {
           List<UserModel> userListLast = jsonDecode(jsonEncode(_userList));
           _userList = [];
@@ -244,6 +214,8 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
       case AppLifecycleState.paused: // Interface invisible, background
         break;
       case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.hidden:
         break;
     }
   }
@@ -281,8 +253,7 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
   _enterRoom() {
     try {
       // Generate usersig
-      _meetModel.getUserInfo().userSig =
-          GenerateTestUserSig.genTestSig(_meetModel.getUserInfo().userId);
+      _meetModel.getUserInfo().userSig = GenerateTestUserSig.genTestSig(_meetModel.getUserInfo().userId);
     } catch (err) {
       _meetModel.getUserInfo().userSig = '';
       print(err);
@@ -291,9 +262,9 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
     // set anchor push video Resolution parameters
     TRTCVideoEncParam videoEncParam = TRTCVideoEncParam();
     videoEncParam.videoResolutionMode = TRTCVideoResolutionMode.portrait;
-    videoEncParam.videoResolution = TRTCVideoResolution.res_640_360;
+    videoEncParam.videoResolution = TRTCVideoResolution.res_1280_720;
     videoEncParam.videoFps = 15;
-    videoEncParam.videoBitrate = 1000;
+    videoEncParam.videoBitrate = 1800;
     _trtcCloud.setVideoEncoderParam(videoEncParam);
 
     // open mic
@@ -434,14 +405,14 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
   }
 
   _startMixStream() async {
-    if (!_isAnchor) return;
+    if (!widget.isHost) return;
 
     List<TRTCVideoLayout> videoLayoutList = [];
 
     TRTCVideoLayout videoLayout = TRTCVideoLayout();
     videoLayout.zOrder = 1;
     videoLayout.fixedVideoStreamType = TRTCVideoStreamType.big;
-    videoLayout.rect = TRTCRect(left: 0, top: 0, right: 360, bottom: 640);
+    videoLayout.rect = TRTCRect(left: 0, top: 0, right: 720, bottom: 1280);
     videoLayout.fixedVideoUser = TRTCUser( userId: _meetModel.getUserInfo().userId, intRoomId: _meetModel.getMeetId()!);
     videoLayoutList.add(videoLayout);
 
@@ -450,7 +421,7 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
       TRTCVideoLayout itemLayout = TRTCVideoLayout();
       itemLayout.zOrder = 1;
       itemLayout.fixedVideoUser = TRTCUser(userId: u.userId, intRoomId: _meetModel.getMeetId()!);
-      itemLayout.rect = TRTCRect(left: 360, top: 0, right: 720, bottom: 640);
+      itemLayout.rect = TRTCRect(left: 720, top: 0, right: 1440, bottom: 1280);
       itemLayout.fixedVideoStreamType = TRTCVideoStreamType.big;
       videoLayoutList.add(itemLayout);
     });
@@ -462,16 +433,16 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
         : TRTCPublishMode.bigStreamToCdn;   // If there is only one person, publish the main stream
     trtcPublishTarget.cdnUrlList = [
       TRTCPublishCdnUrl(
-        rtmpUrl: "rtmp://8525.livepush.myqcloud.com/live/${_mixStreamId}", // Your push address
+        rtmpUrl: "rtmp://${Config.pushDomain}/live/${_mixStreamId}", // Your push address
         isInternalLine: true,
       )
     ];
 
     // set cdn encoding parameters
     TRTCStreamEncoderParam trtcStreamEncoderParam = TRTCStreamEncoderParam();
-    trtcStreamEncoderParam.videoEncodedWidth = videoLayoutList.length > 1 ? 720 : 360;
-    trtcStreamEncoderParam.videoEncodedHeight = 640;
-    trtcStreamEncoderParam.videoEncodedKbps = 1000;
+    trtcStreamEncoderParam.videoEncodedWidth = videoLayoutList.length > 1 ? 1440 : 720;
+    trtcStreamEncoderParam.videoEncodedHeight = 1280;
+    trtcStreamEncoderParam.videoEncodedKbps = 2400;
     trtcStreamEncoderParam.videoEncodedGOP = 3;
     trtcStreamEncoderParam.videoEncodedFPS = 15;
     trtcStreamEncoderParam.audioEncodedSampleRate = 48000;
@@ -485,7 +456,7 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
   }
 
   _updateMixStream() async {
-    if (!_isAnchor) return;
+    if (!widget.isHost) return;
     if (_mixStreamTaskId == null) return;
 
     List<TRTCVideoLayout> videoLayoutList = [];
@@ -493,10 +464,8 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
     TRTCVideoLayout videoLayout = TRTCVideoLayout();
     videoLayout.zOrder = 1;
     videoLayout.fixedVideoStreamType = TRTCVideoStreamType.big;
-    videoLayout.rect = TRTCRect(left: 0, top: 0, right: 360, bottom: 640);
-    videoLayout.fixedVideoUser = TRTCUser(
-        userId: _meetModel.getUserInfo().userId,
-        intRoomId: _meetModel.getMeetId()!);
+    videoLayout.rect = TRTCRect(left: 0, top: 0, right: 720, bottom: 1280);
+    videoLayout.fixedVideoUser = TRTCUser( userId: _meetModel.getUserInfo().userId, intRoomId: _meetModel.getMeetId()!);
     videoLayoutList.add(videoLayout);
 
     _userList.where((u) => u.userId != _meetModel.getUserInfo().userId).forEach((u) {
@@ -504,10 +473,11 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
       TRTCVideoLayout itemLayout = TRTCVideoLayout();
       itemLayout.zOrder = 1;
       itemLayout.fixedVideoUser = TRTCUser(userId: u.userId, intRoomId: _meetModel.getMeetId()!);
-      itemLayout.rect = TRTCRect(left: 360, top: 0, right: 720, bottom: 640);
+      itemLayout.rect = TRTCRect(left: 720, top: 0, right: 1440, bottom: 1280);
       itemLayout.fixedVideoStreamType = TRTCVideoStreamType.big;
       videoLayoutList.add(itemLayout);
     });
+
     
     // Specify the CDN address for publishing.
     TRTCPublishTarget trtcPublishTarget = TRTCPublishTarget();
@@ -516,16 +486,16 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
         : TRTCPublishMode.bigStreamToCdn;   // If there is only one person, publish the main stream
     trtcPublishTarget.cdnUrlList = [
       TRTCPublishCdnUrl(
-        rtmpUrl: "rtmp://8525.livepush.myqcloud.com/live/${_mixStreamId}", // Your push address
+        rtmpUrl: "rtmp://${Config.pushDomain}/live/${_mixStreamId}", // Your push address
         isInternalLine: true,
       )
     ];
 
     // set cdn encoding parameters
     TRTCStreamEncoderParam trtcStreamEncoderParam = TRTCStreamEncoderParam();
-    trtcStreamEncoderParam.videoEncodedWidth = videoLayoutList.length > 1 ? 720 : 360;
-    trtcStreamEncoderParam.videoEncodedHeight = 640;
-    trtcStreamEncoderParam.videoEncodedKbps = 1000;
+    trtcStreamEncoderParam.videoEncodedWidth = videoLayoutList.length > 1 ? 1440 : 720;
+    trtcStreamEncoderParam.videoEncodedHeight = 1280;
+    trtcStreamEncoderParam.videoEncodedKbps = 2400;
     trtcStreamEncoderParam.videoEncodedGOP = 3;
     trtcStreamEncoderParam.videoEncodedFPS = 15;
     trtcStreamEncoderParam.audioEncodedSampleRate = 48000;
@@ -539,7 +509,7 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
   }
 
   _stopMixStream() async {
-    if (!_isAnchor) return;
+    if (!widget.isHost) return;
     if (_mixStreamTaskId == null) return;
     // stop cloud mixing
     _trtcCloud.stopPublishMediaStream(_mixStreamTaskId!);
@@ -605,6 +575,7 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
                     children: List.generate(item.length,(index) => LayoutBuilder(
                         key: ValueKey(item[index].userId + item[index].type + item[index].size.width.toString()),
                         builder:(BuildContext context, BoxConstraints constraints) {
+
                           Size size = MeetingTool.getViewSize( MediaQuery.of(context).size,_userList.length,index,item.length);
                           double width = size.width;
                           double height = size.height;

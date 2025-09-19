@@ -22,7 +22,7 @@ class MeetingPageState extends State<MeetingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Live Meeting"),
+        title: Text("Live Meeting ${_meetModel.getMeetId()}"),
       ),
       body: _meetModel.isAnchor ? Anchor() : Audience(),
     );

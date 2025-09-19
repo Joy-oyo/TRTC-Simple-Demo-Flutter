@@ -12,7 +12,7 @@ class _AnchorState extends State<Anchor> {
   @override
   Widget build(BuildContext context) {
     return LiveRtc(
-      isAnchor: true,
+      isHost: true,
     );
   }
 }

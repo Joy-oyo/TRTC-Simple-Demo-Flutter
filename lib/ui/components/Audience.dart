@@ -13,49 +13,33 @@ class Audience extends StatefulWidget {
 
 class _AudienceState extends State<Audience> {
   late MeetingModel _meetModel;
-  bool _isAnchor = false;
+  bool _isRTC = false;
+
   @override
   void initState() {
     super.initState();
     _meetModel = context.read();
-    _isAnchor = _meetModel.isAnchor;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        _isAnchor
-            ? LiveRtc(
-                isAnchor: _isAnchor,
-              )
-            : LivePlayer(
-                streamId: _meetModel.getMeetId().toString(),
-                isAnchor: _isAnchor,
-                onAnchorStateChanged: () => {},
-              ),
-        if (!_meetModel.isAnchor)
-          Align(
-              child: new Container(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 30),
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _isAnchor = !_isAnchor;
-                          });
-                        },
-                        child: Text(_isAnchor
-                            ? "Switch to Audience"
-                            : "Go live together​"))
-                  ],
-                ),
-                height: 70.0,
-              ),
-              alignment: Alignment.bottomCenter)
-      ],
+
+   ElevatedButton button = ElevatedButton(
+      onPressed: () {
+        _isRTC = !_isRTC;
+        this.setState((){});
+      },
+      child: Text(_isRTC ? "Yield the floor" : "Take the floor​"),
     );
+
+    Row row = Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [button]);
+    Container container = Container(padding: EdgeInsets.fromLTRB(0, 0, 0, 30),height: 70.0,child: row);
+    Align align = Align(alignment: Alignment.bottomCenter, child: container);
+
+    StatefulWidget rootView = _isRTC
+        ? LiveRtc(isHost: false)
+        : LivePlayer(streamId: _meetModel.getMeetId().toString());
+
+    return Stack(children: [rootView, align]);
   }
 }

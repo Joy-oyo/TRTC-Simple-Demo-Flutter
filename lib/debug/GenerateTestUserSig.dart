@@ -27,7 +27,19 @@ class GenerateTestUserSig {
      * You can view your `SDKAppID` after creating an application in the [TRTC console](https://console.cloud.tencent.com/rav).
      * `SDKAppID` uniquely identifies a Tencent Cloud account.
      */
-  static int sdkAppId = 0;
+  static int sdkAppId = 0; // Set it to your sdkAppId
+
+  /**
+     * Follow the steps below to obtain the key required for UserSig calculation.
+     *
+     * Step 1. Log in to the [TRTC console](https://console.trtc.io/app), and create an application if you don’t have one.
+     * Step 2. Find your application, click “Application Info”, and click the “Quick Start” tab.
+     * Step 3. Copy and paste the key to the code, as shown below.
+     *
+     * Note: this method is for testing only. Before commercial launch, please migrate the UserSig calculation code and key to your backend server to prevent key disclosure and traffic stealing.
+     * Reference: https://trtc.io/document/35166?product=rtcengine&menulabel=core%20sdk&platform=flutter
+     */
+  static String secretKey = ''; // Set it to your secretKey
 
   /**
      * Signature validity period, which should not be set too short
@@ -36,18 +48,7 @@ class GenerateTestUserSig {
      * Default value: 604800 (7 days)
      */
   static int expireTime = 604800;
-
-  /**
-     * Follow the steps below to obtain the key required for UserSig calculation.
-     *
-     * Step 1. Log in to the [TRTC console](https://console.cloud.tencent.com/rav), and create an application if you don’t have one.
-     * Step 2. Find your application, click “Application Info”, and click the “Quick Start” tab.
-     * Step 3. Copy and paste the key to the code, as shown below.
-     *
-     * Note: this method is for testing only. Before commercial launch, please migrate the UserSig calculation code and key to your backend server to prevent key disclosure and traffic stealing.
-     * Reference: https://cloud.tencent.com/document/product/647/17275#Server
-     */
-  static String secretKey = '';
+  
 
   static genTestSig(String userId) {
     // if (kIsWeb) {
