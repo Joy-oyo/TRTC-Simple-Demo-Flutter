@@ -20,8 +20,9 @@ class _LivePlayerState extends State<LivePlayer> {
         Config.licenseURL,     // set licenseURL
         Config.licenseKey);    // set licenseKey
     _playerController = TXLivePlayerController()..setRenderMode(FTXPlayerRenderMode.ADJUST_RESOLUTION);
+    // String flvUrl = "https://${Config.playDomain}/live/${ widget.streamId}.flv"; 
     String flvUrl = "webrtc://${Config.playDomain}/live/${ widget.streamId}";       // Your live stream URL
-    _playerController.startLivePlay(flvUrl).then(print);
+    _playerController.startLivePlay(flvUrl).then(print);                            // play cdn stream
   }
 
   @override
