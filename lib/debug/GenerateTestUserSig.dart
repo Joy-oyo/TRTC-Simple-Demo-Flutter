@@ -51,10 +51,7 @@ class GenerateTestUserSig {
   
 
   static genTestSig(String userId) {
-    // if (kIsWeb) {
-    //   return JsGenerateTestUserSig()
-    //       .jsGenTestUserSig(sdkAppId, secretKey, userId, expireTime);
-    // }
+
     int currTime = _getCurrentTime();
     String sig = '';
     Map<String, dynamic> sigDoc = new Map<String, dynamic>();
