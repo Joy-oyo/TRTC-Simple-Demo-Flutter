@@ -417,7 +417,7 @@ class _LiveRtcState extends State<LiveRtc> with WidgetsBindingObserver {
     videoLayoutList.add(videoLayout);
 
     _userList.where((u) => u.userId != _meetModel.getUserInfo().userId).forEach((u) {
-      print("userId: ${u.userId}");
+      // print("userId: ${u.userId}");
       TRTCVideoLayout itemLayout = TRTCVideoLayout();
       itemLayout.zOrder = 1;
       itemLayout.fixedVideoUser = TRTCUser(userId: u.userId, intRoomId: _meetModel.getMeetId()!);
