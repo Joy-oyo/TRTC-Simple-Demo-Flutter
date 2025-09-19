@@ -1,6 +1,6 @@
 class Config {
 
-  static const String pushDomain = ""; // Your push domain
+  static const String pushDomain = "111"; // Your push domain
 
   static const String playDomain = ""; // Your play domain
 
