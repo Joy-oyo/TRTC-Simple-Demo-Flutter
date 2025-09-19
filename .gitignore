@@ -119,5 +119,5 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 
 # Local config files
-#/lib/debug/GenerateTestUserSig.dart
-#/lib/ui/components/Config.dart
+/lib/debug/GenerateTestUserSig.dart
+/lib/ui/components/Config.dart
