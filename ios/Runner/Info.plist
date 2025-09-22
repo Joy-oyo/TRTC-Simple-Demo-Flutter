@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>aaaaa</string>
+	<string>Microphone access is required for audio calls.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>aaaaa</string>
+	<string>Camera access is required for video calls.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
