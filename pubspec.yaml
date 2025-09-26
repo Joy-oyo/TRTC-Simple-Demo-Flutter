@@ -15,8 +15,8 @@ dependencies:
   permission_handler: ^11.3.1
 
   flutter_easyloading: ^3.0.5
-  tencent_rtc_sdk: ^12.6.3
-  # super_player: ^12.8.0  # Temporarily commented out due to dependency conflict 
+  tencent_rtc_sdk: 12.6.3
+  super_player: 12.6.2
 
 
 dev_dependencies:

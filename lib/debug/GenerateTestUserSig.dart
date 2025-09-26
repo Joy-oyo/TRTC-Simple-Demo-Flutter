@@ -27,7 +27,7 @@ class GenerateTestUserSig {
      * You can view your `SDKAppID` after creating an application in the [TRTC console](https://console.cloud.tencent.com/rav).
      * `SDKAppID` uniquely identifies a Tencent Cloud account.
      */
-  static int sdkAppId = ; // Set it to your sdkAppId
+  static int sdkAppId = 20027462; // Set it to your sdkAppId
 
   /**
      * Follow the steps below to obtain the key required for UserSig calculation.
@@ -39,7 +39,7 @@ class GenerateTestUserSig {
      * Note: this method is for testing only. Before commercial launch, please migrate the UserSig calculation code and key to your backend server to prevent key disclosure and traffic stealing.
      * Reference: https://trtc.io/document/35166?product=rtcengine&menulabel=core%20sdk&platform=flutter
      */
-  static String secretKey = ''; // Set it to your secretKey
+  static String secretKey = 'fb36ffab0c2e6dc569f7bb12e014e0d3feaf5a5fcdfea5b8af4bb5074fb53ab4'; // Set it to your secretKey
 
   /**
      * Signature validity period, which should not be set too short

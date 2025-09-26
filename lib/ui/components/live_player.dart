@@ -12,17 +12,17 @@ class LivePlayer extends StatefulWidget {
 }
 
 class _LivePlayerState extends State<LivePlayer> {
-  // late TXLivePlayerController _playerController;  // Temporarily commented out due to super_player dependency
+  late TXLivePlayerController _playerController;
   @override
   void initState() {
     super.initState();
-    // SuperPlayerPlugin.setGlobalLicense(
-    //     Config.licenseURL,     // set licenseURL
-    //     Config.licenseKey);    // set licenseKey
-    // _playerController = TXLivePlayerController()..setRenderMode(FTXPlayerRenderMode.ADJUST_RESOLUTION);
+    SuperPlayerPlugin.setGlobalLicense(
+        Config.licenseURL,     // set licenseURL
+        Config.licenseKey);    // set licenseKey
+    _playerController = TXLivePlayerController()..setRenderMode(FTXPlayerRenderMode.ADJUST_RESOLUTION);
     // String flayUrl = "https://${Config.playDomain}/live/${ widget.streamId}.flv"; 
-    // String flayUrl = "webrtc://${Config.playDomain}/live/${ widget.streamId}";       // Your live stream URL
-    // _playerController.startLivePlay(flayUrl).then(print);                            // play cdn stream
+    String flayUrl = "webrtc://${Config.playDomain}/live/${ widget.streamId}";       // Your live stream URL
+    _playerController.startLivePlay(flayUrl).then(print);                            // play cdn stream
   }
 
   @override
